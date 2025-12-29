@@ -13,29 +13,6 @@
   padding: 1.25rem 0;
 }
 
-.section-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding-bottom: var(--margin-m);
-  margin-left: var(--margin-xxl);
-  margin-right: var(--margin-xxl);
-}
-
-.section-column {
-  display: flex;
-  flex-direction: column;
-  max-width: 45vw;
-}
-
-.section-header {
-  text-align: left;
-  font-size: var(--margin-xl);
-  scroll-margin-top: var(--margin-xxxl);
-  display: block;
-  margin-bottom: var(--margin-xs);
-}
-
 sl-carousel {
   height: 480px;
   width: 480px;
