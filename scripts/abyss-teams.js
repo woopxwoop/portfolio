@@ -26,13 +26,28 @@ class Character {
   }
 }
 
+const payload = {
+  character_names: [
+    "Xiangling","Furina","Bennett","Sucrose","Fischl",
+    "Chevreuse","Varesa","Iansan","Mavuika","Yelan",
+    "Xingqiu","Durin","Kaedehara Kazuha"
+  ],
+  version: 53,
+  num_teams: 100
+};
+
 function fetchAbyssTeams(){
   let teams;
 
   let teamsHTML = ""; 
-  fetch("https://lightkeepers-backend.vercel.app/teams").then((res)=>res.json()).then((data)=>{
 
-    data.forEach((team) => {
+  fetch("https://lightkeepers-backend.vercel.app/db-test-3",{
+    method:'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then((res)=>res.json()).then((data)=>{
+
+    data.data.forEach((team) => {
       teamsHTML += getTeamHTML(team);
     })
 
@@ -42,12 +57,12 @@ function fetchAbyssTeams(){
 
 }
 
-function getTeamHTML(data){
-  let team = "";
-  data.members.forEach((member) => {
-    team += `<img src = "${member.icon}"></img>`;
+function getTeamHTML(team){
+  let teamHTML = "";
+  team.members.forEach((member) => {
+    teamHTML += `<p>${member}<p>`;
   })
-  return `<div> ${team} </div> <br/>`;
+  return `<div> ${teamHTML} </div> <br/>`;
 }
 
 function dataToCharacter(data){
