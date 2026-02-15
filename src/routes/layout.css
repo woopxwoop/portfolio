@@ -1,1 +1,72 @@
 @import 'tailwindcss';
+
+:root {
+	--foreground-color: rgb(25, 25, 25);
+	--background-color: rgb(252, 252, 252);
+
+	--lighter-color: rgb(222, 222, 222);
+	--intermediate-color: rgb(100, 100, 100);
+	--darker-color: rgb(31, 31, 31);
+
+	--secondary-color: rgb(134, 98, 234);
+
+	--h1-text: clamp(3.5vw /* 8px */, 3vw + 0.25rem /* 4px */, 6rem /* 96px */);
+	--h2-text: clamp(2.25vw /* 8px */, 1.75vw + 0.225rem /* 3.2px */, 4rem /* 64px */);
+	--p-text: clamp(1.5vw /* 8px */, 1.25vw + 0.2rem /* 3.2px */, 4rem /* 64px */);
+}
+
+body {
+	background-color: var(--background-color);
+	color: var(--foreground-color);
+	transition:
+		background-color 0.3s,
+		color 0.3s; /* Smooth transition */
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+.accent-font {
+	font-family: 'Bree Serif', serif;
+}
+
+h1 {
+	font-size: var(--h1-text);
+}
+
+h2 {
+	font-size: var(--h2-text);
+}
+
+p {
+	font-size: var(--p-text);
+}
+
+@layer utilities {
+	.secondary-color {
+		@apply text-(--secondary-color);
+	}
+
+	.intermediate-color {
+		@apply text-(--intermediate-color);
+	}
+
+	.lighter-color {
+		@apply text-(--lighter-color);
+	}
+
+	.h1-text {
+		@apply text-(length:--h1-text);
+	}
+
+	.h2-text {
+		@apply text-(length:--h2-text);
+	}
+
+	.p-text {
+		@apply text-(length:--p-text);
+	}
+
+	.invert-theme {
+		@apply text-(--background-color);
+		@apply bg-(--darker-color);
+	}
+}
