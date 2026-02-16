@@ -18,7 +18,7 @@ export const projects: Project[] = [
 		id: 3,
 		title: 'Flappy Bird NN',
 		description: 'Feedforward neural network plays Flappy Bird',
-		image: 'https://woopxwoop.github.io/flappy-bird/thumbnail.png',
+		image: 'https://woopxwoop.github.io/flappy-bird/thumbnail.jpg',
 		link: 'https://woopxwoop.github.io/flappy-bird'
 	},
 	{
@@ -32,7 +32,7 @@ export const projects: Project[] = [
 		id: 1,
 		title: 'Pokedex',
 		description: 'Pokedex made by a fifteen year old',
-		image: 'https://cs571-f25.github.io/p72/wooper.png',
+		image: 'https://cs571-f25.github.io/p72/pokedex.png',
 		link: 'https://studio.code.org/projects/applab/OyT0N4tNcVFDVQDuFIcrpLjZYe9oGXTZU0rUPMxwxvQ'
 	}
 ];
