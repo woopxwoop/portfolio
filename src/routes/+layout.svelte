@@ -1,5 +1,4 @@
 <script lang="ts">
-	export const prerender = true;
 	import '@fontsource/source-sans-pro';
 	import '@fontsource/bree-serif';
 	import './layout.css';
@@ -73,14 +72,13 @@
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <div class="flex w-full flex-col items-center">
 	<nav
-		class="accent-font fixed z-10 flex w-full flex-row justify-start gap-4 border-b-2 border-(--foreground-color) p-4 px-12 backdrop-blur-xs"
+		class="accent-font fixed z-10 flex w-full flex-row justify-start gap-4 border-b-2 border-(--foreground-color) p-4 px-16 backdrop-blur-sm backdrop-brightness-95"
 	>
 		{#each navItems as navItem}
 			<a
 				href={navItem.path}
 				aria-current={page.url.pathname === navItem.path}
 				class="h2-text duration-150 hover:-translate-y-0.5 hover:text-(--secondary-color)"
-				class:italic={page.url.pathname === navItem.path}
 				class:text-(--secondary-color)={page.url.pathname === navItem.path}
 			>
 				{navItem.text}

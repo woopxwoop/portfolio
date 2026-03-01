@@ -22,7 +22,7 @@ export const projects: Project[] = [
 	{
 		id: 2,
 		title: 'Weather, Huh?',
-		description: 'Tomorrow.io powered weather web app',
+		description: `Tomorrow.io powered weather web application for CS571`,
 		image: 'https://cs571-f25.github.io/p72/icon.png',
 		links: [
 			{ link: 'https://cs571-f25.github.io/p72/', icon: 'weblink' },
@@ -32,7 +32,7 @@ export const projects: Project[] = [
 	{
 		id: 1,
 		title: 'Pokedex',
-		description: 'Pokedex made by a fifteen year old',
+		description: 'Javascript project that earned a five in AP CSP',
 		image: 'https://cs571-f25.github.io/p72/pokedex.png',
 		links: [
 			{
