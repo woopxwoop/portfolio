@@ -2,17 +2,17 @@
 
 :root {
 	--foreground-color: rgb(25, 25, 25);
-	--background-color: rgb(252, 252, 252);
+	--background-color: rgb(234, 234, 234);
 
-	--lighter-color: rgb(222, 222, 222);
+	--lighter-color: rgb(252, 252, 252);
 	--intermediate-color: rgb(100, 100, 100);
 	--darker-color: rgb(31, 31, 31);
 
 	--secondary-color: rgb(134, 98, 234);
 
-	--h1-text: clamp(3.5vw /* 8px */, 3vw + 0.25rem /* 4px */, 6rem /* 96px */);
-	--h2-text: clamp(2.25vw /* 8px */, 1.75vw + 0.225rem /* 3.2px */, 4rem /* 64px */);
-	--p-text: clamp(1.5vw /* 8px */, 1.25vw + 0.2rem /* 3.2px */, 4rem /* 64px */);
+	--h1-text: clamp(24px /* 8px */, 3vw + 0.25rem /* 4px */, 6rem /* 96px */);
+	--h2-text: clamp(20px /* 8px */, 1.75vw + 0.225rem /* 3.2px */, 4rem /* 64px */);
+	--p-text: clamp(16px /* 8px */, 1.25vw + 0.2rem /* 3.2px */, 4rem /* 64px */);
 }
 
 body {

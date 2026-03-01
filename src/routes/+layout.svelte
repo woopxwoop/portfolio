@@ -62,7 +62,8 @@
 					link: 'https://github.com/woopxwoop'
 				},
 				{
-					text: 'resume'
+					text: 'resume',
+					link: 'https://drive.google.com/file/d/1ApYbuI7CXlhGWDoBljST8vUn6hR7HXcq/view?usp=sharing'
 				}
 			]
 		}
@@ -89,14 +90,20 @@
 	<div class="mt-32"></div>
 
 	{@render children()}
-	<footer class="invert-theme flex h-48 w-full justify-center">
-		<div class="grid w-[80%] grid-cols-12 px-8 py-6">
+	<footer class="invert-theme flex w-full justify-center">
+		<div class="grid w-[90%] grid-cols-12 px-8 py-6">
 			{#each footerSections as section}
 				<div class="col-span-3 flex flex-col">
 					<div class="p-text mb-4">{section.sectionTitle}</div>
 					{#each section.sectionItems as item}
 						{#if item.link}
-							<a class="p-text lighter-color" href={item.link} target="_blank"> {item.text}</a>
+							<a
+								class="p-text lighter-color hover:text-(--secondary-color)"
+								href={item.link}
+								target="_blank"
+							>
+								{item.text}</a
+							>
 						{:else}
 							<div class="p-text lighter-color">{item.text}</div>
 						{/if}

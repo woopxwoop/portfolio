@@ -6,20 +6,22 @@
 	import { courses } from '$lib/data/courses';
 </script>
 
-<main class="w-[80%]">
-	<div class="grid w-full grid-cols-12 content-center items-center justify-center gap-8">
-		<div class="h2-text col-span-8">
-			Yahallo. I am <span class="secondary-color">Andrew Lou</span>, a 2nd year student in Computer
+<main class="w-[90%]">
+	<div
+		class="flex w-full flex-col content-center items-center justify-center gap-8 md:grid md:grid-cols-12"
+	>
+		<img
+			src={me}
+			alt="me"
+			class="aspect-square max-h-64 max-w-full rounded-xl border-2 border-(--secondary-color) object-cover md:order-2 md:col-span-4"
+		/>
+		<div class="h2-text md:col-span-8">
+			Yahallo. I am <span class="accent-font">Andrew Lou</span>, a 2nd year student in Computer
 			Science and Computer Engineering at the University of Wisconsin-Madison interested in
 			<span class="accent-font">Web Development </span>,
 			<span class="accent-font">Machine Learning</span>, and
 			<span class="accent-font">Human-Computer Interaction</span>.
 		</div>
-		<img
-			src={me}
-			alt="me"
-			class="col-span-4 aspect-square max-h-64 max-w-full rounded-xl border-2 border-(--secondary-color) object-cover"
-		/>
 	</div>
 
 	<div class="mt-10"></div>
@@ -28,12 +30,12 @@
 	</h1>
 	<div class="grid w-full grid-cols-12 content-center justify-center gap-8">
 		{#each projects as project}
-			<div class="col-span-6 sm:col-span-4 lg:col-span-3">
+			<div class="col-span-6 h-full sm:col-span-4 lg:col-span-3">
 				<Card
 					image={project.image}
 					title={project.title}
 					text={project.description}
-					link={project.link}
+					links={project.links}
 				></Card>
 			</div>
 		{/each}
@@ -48,7 +50,7 @@
 					image={project.image}
 					title={project.title}
 					text={project.description}
-					link={project.link}
+					links={project.links}
 				></Card>
 			</div>
 		{/each}
