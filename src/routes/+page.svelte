@@ -1,60 +1,431 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import me from '$lib/assets/samui.jpg';
-	import Card from '$lib/components/ui/Card.svelte';
-	import Accordion from '$lib/components/ui/Accordion.svelte';
-	import { projects, contributions } from '$lib/data/projects';
-	import { courses } from '$lib/data/courses';
+	import { resolve } from '$app/paths';
+
+	let canvas: HTMLCanvasElement;
+	let hero: HTMLElement;
+
+	const COLORS = ['#b02a14', '#c0321a', '#a82010', '#cc3a1e', '#961e0e', '#d44422', '#8a1a0c'];
+
+	type Leaf = {
+		x: number;
+		y: number;
+		vx: number;
+		vy: number;
+		size: number;
+		angle: number;
+		spin: number;
+		sway: number;
+		swaySpeed: number;
+		swayAmp: number;
+		color: string;
+		opacity: number;
+		life: number;
+		decay: number;
+	};
+
+	onMount(() => {
+		const ctx = canvas.getContext('2d')!;
+		const leaves: Leaf[] = [];
+		let lastX = -999,
+			lastY = -999;
+		let spawnCooldown = 0;
+		let raf: number;
+
+		function resize() {
+			canvas.width = hero.offsetWidth;
+			canvas.height = hero.offsetHeight;
+		}
+		resize();
+		window.addEventListener('resize', resize);
+
+		function spawnLeaf(x: number, y: number, vx: number, vy: number) {
+			leaves.push({
+				x,
+				y,
+				vx: vx * 0.35 + (Math.random() - 0.5) * 0.8,
+				vy: vy * 0.2 + 0.4 + Math.random() * 0.6,
+				size: 9 + Math.random() * 11,
+				angle: Math.random() * Math.PI * 2,
+				spin: (Math.random() - 0.5) * 0.018,
+				sway: Math.random() * Math.PI * 2,
+				swaySpeed: 0.025 + Math.random() * 0.02,
+				swayAmp: 0.25 + Math.random() * 0.35,
+				color: COLORS[Math.floor(Math.random() * COLORS.length)],
+				opacity: 0.7 + Math.random() * 0.3,
+				life: 1.0,
+				decay: 0.003 + Math.random() * 0.003
+			});
+		}
+
+		function drawLeaf(
+			x: number,
+			y: number,
+			size: number,
+			angle: number,
+			color: string,
+			opacity: number
+		) {
+			ctx.save();
+			ctx.translate(x, y);
+			ctx.rotate(angle);
+			ctx.scale(size, size);
+			ctx.globalAlpha = opacity;
+			ctx.fillStyle = color;
+
+			const pts: [number, number][] = [
+				[0, -1],
+				[0.22, -0.78],
+				[0.42, -0.82],
+				[0.35, -0.58],
+				[0.72, -0.5],
+				[0.58, -0.22],
+				[0.88, 0.02],
+				[0.5, 0.1],
+				[0.3, 0.45],
+				[0.08, 0.22],
+				[0, 0.5],
+				[-0.08, 0.22],
+				[-0.3, 0.45],
+				[-0.5, 0.1],
+				[-0.88, 0.02],
+				[-0.58, -0.22],
+				[-0.72, -0.5],
+				[-0.35, -0.58],
+				[-0.42, -0.82],
+				[-0.22, -0.78]
+			];
+
+			ctx.beginPath();
+			ctx.moveTo(pts[0][0], pts[0][1]);
+			for (let i = 1; i < pts.length; i++) {
+				const prev = pts[i - 1],
+					curr = pts[i];
+				ctx.quadraticCurveTo(prev[0], prev[1], (prev[0] + curr[0]) / 2, (prev[1] + curr[1]) / 2);
+			}
+			ctx.closePath();
+			ctx.fill();
+
+			ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+			ctx.lineWidth = 0.04;
+			ctx.beginPath();
+			ctx.moveTo(0, -0.85);
+			ctx.lineTo(0, 0.45);
+			ctx.moveTo(0, -0.3);
+			ctx.lineTo(0.45, -0.05);
+			ctx.moveTo(0, -0.3);
+			ctx.lineTo(-0.45, -0.05);
+			ctx.moveTo(0, 0.0);
+			ctx.lineTo(0.28, 0.3);
+			ctx.moveTo(0, 0.0);
+			ctx.lineTo(-0.28, 0.3);
+			ctx.stroke();
+			ctx.restore();
+		}
+
+		function onMouseMove(e: MouseEvent) {
+			const rect = hero.getBoundingClientRect();
+			const mx = e.clientX - rect.left;
+			const my = e.clientY - rect.top;
+			const dx = mx - lastX,
+				dy = my - lastY;
+			const speed = Math.sqrt(dx * dx + dy * dy);
+
+			if (speed > 4 && spawnCooldown <= 0) {
+				const count = Math.min(3, Math.floor(speed / 10) + 1);
+				for (let i = 0; i < count; i++) {
+					spawnLeaf(mx + (Math.random() - 0.5) * 16, my + (Math.random() - 0.5) * 16, dx, dy);
+				}
+				spawnCooldown = 3;
+			}
+			lastX = mx;
+			lastY = my;
+		}
+
+		hero.addEventListener('mousemove', onMouseMove);
+
+		function animate() {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			if (spawnCooldown > 0) spawnCooldown--;
+
+			for (let i = leaves.length - 1; i >= 0; i--) {
+				const l = leaves[i];
+				l.sway += l.swaySpeed;
+				l.x += l.vx + Math.sin(l.sway) * l.swayAmp;
+				l.y += l.vy;
+				l.vy += 0.018;
+				l.vx *= 0.98;
+				l.angle += l.spin;
+				l.life -= l.decay;
+
+				if (l.y > canvas.height + 30 || l.life <= 0) {
+					leaves.splice(i, 1);
+					continue;
+				}
+
+				const fade = l.life < 0.25 ? l.life / 0.25 : 1;
+				drawLeaf(l.x, l.y, l.size, l.angle, l.color, l.opacity * fade);
+			}
+			raf = requestAnimationFrame(animate);
+		}
+		animate();
+
+		return () => {
+			cancelAnimationFrame(raf);
+			hero.removeEventListener('mousemove', onMouseMove);
+			window.removeEventListener('resize', resize);
+		};
+	});
 </script>
 
-<main class="w-[90%]">
-	<div
-		class="flex w-full flex-col content-center items-center justify-center gap-8 md:grid md:grid-cols-12"
-	>
-		<img
-			src={me}
-			alt="me"
-			class="aspect-square max-h-64 max-w-full rounded-xl border-2 border-(--secondary-color) object-cover md:order-2 md:col-span-4"
-		/>
-		<div class="h2-text md:col-span-8">
-			Yahallo. I am <span class="accent-font">Andrew Lou</span>, a 2nd year student in Computer
-			Science and Computer Engineering at the University of Wisconsin-Madison interested in
-			<span class="accent-font">Web Development </span>,
-			<span class="accent-font">Machine Learning</span>, and
-			<span class="accent-font">Human-Computer Interaction</span>.
+<!-- Full-bleed hero — no wrapper padding, sits edge to edge -->
+<section bind:this={hero} class="hero">
+	<canvas bind:this={canvas} class="leaf-canvas"></canvas>
+
+	<div class="hero-grid">
+		<div class="hero-left">
+			<div class="hero-tag accent-font">CS + CE · UW–Madison · 2027</div>
+			<h1 class="hero-name accent-font">
+				Andrew<span class="hero-accent">Lou.</span>
+			</h1>
+			<div class="hero-kanji accent-font">一期一会</div>
+			<p class="hero-desc">
+				Building at the intersection of <strong>web development</strong>,
+				<strong>machine learning</strong>, and <strong>human-computer interaction</strong>. Equally
+				at home in x86 assembly and React. Sometimes in costume.
+			</p>
+			<div class="hero-actions">
+				<a href={resolve('/projects')} class="btn-primary accent-font">View Projects</a>
+				<a
+					href="https://drive.google.com/file/d/1ApYbuI7CXlhGWDoBljST8vUn6hR7HXcq/view?usp=sharing"
+					target="_blank"
+					class="btn-ghost accent-font"
+				>
+					Resume
+				</a>
+			</div>
+		</div>
+
+		<div class="hero-right">
+			<div class="photo-arch">
+				<img src={me} alt="Andrew Lou" class="photo-img" />
+			</div>
+			<div class="ticker-bar">
+				<span class="ticker-text accent-font">
+					Web Dev &nbsp;·&nbsp; Machine Learning &nbsp;·&nbsp; HCI &nbsp;·&nbsp; Operating Systems
+					&nbsp;·&nbsp; Algorithms &nbsp;·&nbsp; SvelteKit &nbsp;·&nbsp; Python &nbsp;·&nbsp; C
+					&nbsp;·&nbsp; Open Source &nbsp;·&nbsp; Web Dev &nbsp;·&nbsp; Machine Learning
+					&nbsp;·&nbsp; HCI &nbsp;·&nbsp; Operating Systems &nbsp;·&nbsp; Algorithms &nbsp;·&nbsp;
+					SvelteKit &nbsp;·&nbsp; Python &nbsp;·&nbsp; C &nbsp;·&nbsp; Open Source
+					&nbsp;&nbsp;&nbsp;
+				</span>
+			</div>
 		</div>
 	</div>
+</section>
 
-	<div class="mt-10"></div>
-	<h1 class="accent-font mb-8 border-b-8 border-(--secondary-color)">
-		Personal and School Projects
-	</h1>
-	<div class="grid w-full grid-cols-12 content-center justify-center gap-8">
-		{#each projects as project}
-			<div class="col-span-6 h-full sm:col-span-4 lg:col-span-3">
-				<Card
-					image={project.image}
-					title={project.title}
-					text={project.description}
-					links={project.links}
-				></Card>
-			</div>
-		{/each}
-	</div>
+<style>
+	/* ── Page theme — nav and accent pick these up automatically ── */
+	:global(:root) {
+		--accent-color: #c0321a;
+		--nav-bg: rgba(247, 243, 240, 0.88);
+		--nav-fg: #1a1118;
+		--nav-border: #1a1118;
+	}
 
-	<div class="mt-10"></div>
-	<h1 class="accent-font mb-8 border-b-8 border-(--secondary-color)">Open Source Contributions</h1>
-	<div class="grid w-full grid-cols-12 content-center justify-center gap-8">
-		{#each contributions as project}
-			<div class="col-span-6 sm:col-span-4 lg:col-span-3">
-				<Card
-					image={project.image}
-					title={project.title}
-					text={project.description}
-					links={project.links}
-				></Card>
-			</div>
-		{/each}
-	</div>
+	/* ── Hero ── */
+	.hero {
+		position: relative;
+		width: 100%;
+		height: 100svh;
+		overflow: hidden;
+		background: #f7f3f0;
+	}
 
-	<div class="mt-10"></div>
-</main>
+	.leaf-canvas {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		z-index: 20;
+	}
+
+	.hero-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		height: 100%;
+	}
+
+	@media (max-width: 640px) {
+		.hero-grid {
+			grid-template-columns: 1fr;
+		}
+		.hero-right {
+			display: none;
+		}
+	}
+
+	.hero-left {
+		padding: 8rem 4rem 4rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 1.2rem;
+		position: relative;
+		z-index: 5;
+	}
+
+	.hero-tag {
+		font-size: 11px;
+		letter-spacing: 0.15em;
+		text-transform: uppercase;
+		color: var(--accent-color);
+		font-weight: 600;
+	}
+
+	.hero-name {
+		font-size: clamp(48px, 6vw, 80px);
+		line-height: 1;
+		color: #1a1118;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.hero-accent {
+		color: var(--accent-color);
+	}
+
+	.hero-kanji {
+		font-size: 13px;
+		color: rgba(100, 70, 60, 0.4);
+		letter-spacing: 0.3em;
+		margin-top: -0.2rem;
+	}
+
+	.hero-desc {
+		font-size: clamp(14px, 1.2vw, 16px);
+		line-height: 1.75;
+		color: #6b5a54;
+		max-width: 380px;
+		margin: 0;
+	}
+
+	.hero-desc strong {
+		color: #1a1118;
+		font-weight: 600;
+	}
+
+	.hero-actions {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		flex-wrap: wrap;
+		margin-top: 0.5rem;
+	}
+
+	.btn-primary {
+		background: #1a1118;
+		color: #f7f3f0;
+		border: none;
+		padding: 0.65rem 1.6rem;
+		border-radius: 3px;
+		font-size: 13px;
+		text-decoration: none;
+		letter-spacing: 0.04em;
+		transition: opacity 0.15s;
+	}
+	.btn-primary:hover {
+		opacity: 0.8;
+	}
+
+	.btn-ghost {
+		background: none;
+		color: #1a1118;
+		border: 2px solid #1a1118;
+		padding: 0.6rem 1.6rem;
+		border-radius: 3px;
+		font-size: 13px;
+		text-decoration: none;
+		letter-spacing: 0.04em;
+		transition: opacity 0.15s;
+	}
+	.btn-ghost:hover {
+		opacity: 0.55;
+	}
+
+	/* ── Right panel ── */
+	.hero-right {
+		position: relative;
+		overflow: hidden;
+		background: #ece5df;
+		border-left: 1px solid rgba(26, 17, 24, 0.1);
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		z-index: 1;
+	}
+
+	.photo-arch {
+		width: 72%;
+		height: 90%;
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		border-radius: 120px 120px 0 0;
+		overflow: hidden;
+		z-index: 2;
+	}
+
+	.photo-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: top center;
+	}
+
+	.ticker-bar {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 28px;
+		background: var(--accent-color);
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		z-index: 10;
+	}
+
+	.ticker-text {
+		display: inline-block;
+		white-space: nowrap;
+		animation: ticker 26s linear infinite;
+		font-size: 11px;
+		color: rgba(247, 243, 240, 0.9);
+		letter-spacing: 0.08em;
+	}
+
+	@keyframes ticker {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(-50%);
+		}
+	}
+
+	/* ── Below-hero content ── */
+	.content-section {
+		width: 90%;
+		margin: 0 auto;
+		padding: 5rem 0 4rem;
+	}
+
+	.section-heading {
+		margin-bottom: 2rem;
+		border-bottom: 6px solid var(--accent-color);
+		padding-bottom: 0.5rem;
+	}
+</style>

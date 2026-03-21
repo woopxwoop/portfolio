@@ -10,11 +10,12 @@
 	--intermediate-color: rgb(100, 100, 100);
 	--darker-color: rgb(31, 31, 31);
 
-	--secondary-color: rgb(134, 98, 234);
+	/* accent is intentionally not set here — each page/section defines its own */
+	--accent-color: transparent;
 
-	--h1-text: clamp(24px /* 8px */, 3vw + 0.25rem /* 4px */, 6rem /* 96px */);
-	--h2-text: clamp(20px /* 8px */, 1.75vw + 0.225rem /* 3.2px */, 4rem /* 64px */);
-	--p-text: clamp(16px /* 8px */, 1.25vw + 0.2rem /* 3.2px */, 4rem /* 64px */);
+	--h1-text: clamp(24px, 3vw + 0.25rem, 6rem);
+	--h2-text: clamp(20px, 1.75vw + 0.225rem, 4rem);
+	--p-text: clamp(16px, 1.25vw + 0.2rem, 4rem);
 }
 
 body {
@@ -22,7 +23,7 @@ body {
 	color: var(--foreground-color);
 	transition:
 		background-color 0.3s,
-		color 0.3s; /* Smooth transition */
+		color 0.3s;
 	font-family: 'Source Sans Pro', sans-serif;
 }
 
@@ -33,18 +34,17 @@ body {
 h1 {
 	font-size: var(--h1-text);
 }
-
 h2 {
 	font-size: var(--h2-text);
 }
-
 p {
 	font-size: var(--p-text);
 }
 
 @layer utilities {
-	.secondary-color {
-		@apply text-(--secondary-color);
+	/* accent-color is now per-page — use var(--accent-color) wherever you previously used --secondary-color */
+	.accent-color {
+		@apply text-(--accent-color);
 	}
 
 	.intermediate-color {
