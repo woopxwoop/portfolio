@@ -180,22 +180,34 @@
 </script>
 
 <!-- Full-bleed hero — no wrapper padding, sits edge to edge -->
-<section bind:this={hero} class="hero">
-	<canvas bind:this={canvas} class="leaf-canvas"></canvas>
+<section bind:this={hero} class="relative w-full overflow-hidden" style="height: 100svh;">
+	<canvas bind:this={canvas} class="pointer-events-none absolute inset-0" style="z-index: 20;"
+	></canvas>
 
-	<div class="hero-grid">
-		<div class="hero-left">
-			<div class="hero-tag accent-font">CS + CE · UW–Madison · 2027</div>
-			<h1 class="hero-name accent-font">
-				Andrew<span class="hero-accent">Lou.</span>
-			</h1>
-			<div class="hero-kanji accent-font">一期一会</div>
+	<div class="grid h-full grid-cols-1 md:grid-cols-2">
+		<!-- Left: text — centered on mobile, left-aligned on desktop -->
+		<div
+			class="relative z-10 flex flex-col items-center justify-center gap-5 px-10 pt-32 pb-16 text-center md:items-start md:px-16 md:text-left"
+		>
+			<!-- Mobile-only avatar -->
+			<div class="hero-avatar block md:hidden">
+				<img src={me} alt="Andrew Lou" class="h-full w-full object-cover object-top" />
+			</div>
+
+			<div class="hero-tag accent-font">CS + CE · UW–Madison · 28</div>
+
+			<h2 class="hero-name accent-font m-0 leading-none">
+				Andrew <span class="hero-accent">Lou</span>
+			</h2>
+
 			<p class="hero-desc">
 				Building at the intersection of <strong>web development</strong>,
-				<strong>machine learning</strong>, and <strong>human-computer interaction</strong>. Equally
-				at home in x86 assembly and React. Sometimes in costume.
+				<strong>machine learning</strong>, and
+				<strong>human-computer interaction</strong>. Equally at home in x86 assembly and React.
+				Sometimes in costume.
 			</p>
-			<div class="hero-actions">
+
+			<div class="flex flex-wrap justify-center gap-4 md:justify-start">
 				<a href={resolve('/projects')} class="btn-primary accent-font">View Projects</a>
 				<a
 					href="https://drive.google.com/file/d/1ApYbuI7CXlhGWDoBljST8vUn6hR7HXcq/view?usp=sharing"
@@ -207,9 +219,10 @@
 			</div>
 		</div>
 
-		<div class="hero-right">
+		<!-- Right: photo panel — hidden on mobile -->
+		<div class="hero-right relative hidden items-end justify-center overflow-hidden md:flex">
 			<div class="photo-arch">
-				<img src={me} alt="Andrew Lou" class="photo-img" />
+				<img src={me} alt="Andrew Lou" class="h-full w-full object-cover object-top" />
 			</div>
 			<div class="ticker-bar">
 				<span class="ticker-text accent-font">
@@ -226,7 +239,7 @@
 </section>
 
 <style>
-	/* ── Page theme — nav and accent pick these up automatically ── */
+	/* ── Page theme ── */
 	:global(:root) {
 		--accent-color: #c0321a;
 		--nav-bg: rgba(247, 243, 240, 0.88);
@@ -234,45 +247,17 @@
 		--nav-border: #1a1118;
 	}
 
-	/* ── Hero ── */
-	.hero {
-		position: relative;
-		width: 100%;
-		height: 100svh;
-		overflow: hidden;
+	section {
 		background: #f7f3f0;
 	}
 
-	.leaf-canvas {
-		position: absolute;
-		inset: 0;
-		pointer-events: none;
-		z-index: 20;
-	}
-
-	.hero-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		height: 100%;
-	}
-
-	@media (max-width: 640px) {
-		.hero-grid {
-			grid-template-columns: 1fr;
-		}
-		.hero-right {
-			display: none;
-		}
-	}
-
-	.hero-left {
-		padding: 8rem 4rem 4rem;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		gap: 1.2rem;
-		position: relative;
-		z-index: 5;
+	.hero-avatar {
+		width: 180px;
+		height: 180px;
+		border-radius: 50%;
+		overflow: hidden;
+		flex-shrink: 0;
+		border: 2px solid var(--accent-color);
 	}
 
 	.hero-tag {
@@ -284,23 +269,12 @@
 	}
 
 	.hero-name {
-		font-size: clamp(48px, 6vw, 80px);
-		line-height: 1;
+		font-size: clamp(40px, 6vw, 80px);
 		color: #1a1118;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
 	}
 
 	.hero-accent {
 		color: var(--accent-color);
-	}
-
-	.hero-kanji {
-		font-size: 13px;
-		color: rgba(100, 70, 60, 0.4);
-		letter-spacing: 0.3em;
-		margin-top: -0.2rem;
 	}
 
 	.hero-desc {
@@ -314,14 +288,6 @@
 	.hero-desc strong {
 		color: #1a1118;
 		font-weight: 600;
-	}
-
-	.hero-actions {
-		display: flex;
-		gap: 1rem;
-		align-items: center;
-		flex-wrap: wrap;
-		margin-top: 0.5rem;
 	}
 
 	.btn-primary {
@@ -354,15 +320,9 @@
 		opacity: 0.55;
 	}
 
-	/* ── Right panel ── */
 	.hero-right {
-		position: relative;
-		overflow: hidden;
 		background: #ece5df;
 		border-left: 1px solid rgba(26, 17, 24, 0.1);
-		display: flex;
-		align-items: flex-end;
-		justify-content: center;
 		z-index: 1;
 	}
 
@@ -376,13 +336,6 @@
 		border-radius: 120px 120px 0 0;
 		overflow: hidden;
 		z-index: 2;
-	}
-
-	.photo-img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: top center;
 	}
 
 	.ticker-bar {
@@ -414,18 +367,5 @@
 		to {
 			transform: translateX(-50%);
 		}
-	}
-
-	/* ── Below-hero content ── */
-	.content-section {
-		width: 90%;
-		margin: 0 auto;
-		padding: 5rem 0 4rem;
-	}
-
-	.section-heading {
-		margin-bottom: 2rem;
-		border-bottom: 6px solid var(--accent-color);
-		padding-bottom: 0.5rem;
 	}
 </style>

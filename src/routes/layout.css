@@ -10,9 +10,6 @@
 	--intermediate-color: rgb(100, 100, 100);
 	--darker-color: rgb(31, 31, 31);
 
-	/* accent is intentionally not set here — each page/section defines its own */
-	--accent-color: transparent;
-
 	--h1-text: clamp(24px, 3vw + 0.25rem, 6rem);
 	--h2-text: clamp(20px, 1.75vw + 0.225rem, 4rem);
 	--p-text: clamp(16px, 1.25vw + 0.2rem, 4rem);
