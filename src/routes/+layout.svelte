@@ -77,7 +77,7 @@
 
 	{@render children()}
 
-	<footer class="invert-theme flex w-full justify-center">
+	<footer class="flex w-full justify-center border-t-2 border-(--darker-color)">
 		<div class="grid w-[90%] grid-cols-12 px-8 py-6">
 			{#each footerSections as section (section.sectionTitle)}
 				<div class="col-span-3 flex flex-col">
@@ -85,7 +85,7 @@
 					{#each section.sectionItems as item (item.link)}
 						{#if item.link}
 							<a
-								class="p-text lighter-color footer-link"
+								class="p-text footer-link intermediate-color"
 								href={item.link}
 								rel="external"
 								target="_blank"
@@ -93,7 +93,7 @@
 								{item.text}
 							</a>
 						{:else}
-							<div class="p-text lighter-color">{item.text}</div>
+							<div class="p-text">{item.text}</div>
 						{/if}
 					{/each}
 				</div>
@@ -103,6 +103,11 @@
 </div>
 
 <style>
+	footer {
+		background: #f7f3f0;
+		color: var(--darker-color);
+	}
+
 	.site-nav {
 		border-bottom: 2px solid;
 		transition:
