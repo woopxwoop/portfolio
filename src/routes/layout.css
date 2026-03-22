@@ -9,6 +9,7 @@
 	--lighter-color: rgb(252, 252, 252);
 	--intermediate-color: #646464;
 	--darker-color: rgb(31, 31, 31);
+	--accent-color: #c0321a;
 
 	--h1-text: clamp(28px, 4vw + 0.25rem, 6rem);
 	--h2-text: clamp(24px, 2vw + 0.225rem, 4rem);

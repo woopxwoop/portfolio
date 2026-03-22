@@ -241,7 +241,7 @@
 			<img src={me} alt="Andrew Lou" class="portrait-img" />
 		</div>
 	</div>
-	<div>hi?aosetuhoesantuh</div>
+	<div></div>
 </section>
 
 <style>
