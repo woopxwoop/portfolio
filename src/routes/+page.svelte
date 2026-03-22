@@ -186,46 +186,35 @@
 	});
 </script>
 
-<section bind:this={hero} class="relative w-full overflow-hidden" style="height: 100svh;">
-	<canvas bind:this={canvas} class="pointer-events-none absolute inset-0" style="z-index: 20;"
-	></canvas>
+<section bind:this={hero} class="h-svh w-full overflow-hidden">
+	<canvas bind:this={canvas} class="pointer-events-none absolute inset-0"></canvas>
 
-	<div class="grid h-full grid-cols-1 md:grid-cols-2">
-		<div
-			class="relative z-10 flex flex-col items-center justify-center gap-5 px-10 pt-32 pb-16 text-center md:items-start md:px-16 md:text-left"
-		>
-			<div class="hero-avatar block md:hidden">
-				<img src={me} alt="Andrew Lou" class="h-full w-full object-cover object-top" />
+	<!-- Single unified layout: text left, portrait right -->
+	<div class="hero-inner">
+		<!-- Text block -->
+		<div class="hero-copy">
+			<!-- Mobile avatar -->
+			<div class="hero-avatar-mobile">
+				<img src={me} alt="Andrew Lou" class="h-full w-full object-cover" />
 			</div>
 
-			<div class="hero-tag accent-font">CS + CE · UW–Madison · 28</div>
-
-			<h2 class="hero-name accent-font m-0 leading-none">
+			<h1 class="hero-name accent-font">
 				Andrew <span class="hero-accent">Lou</span>
-			</h2>
+			</h1>
 
 			<p class="hero-desc">
-				Building at the intersection of <strong>web development</strong>,
+				Computer Science and Engineering student at the University of <span class="hero-accent"
+					>Wisconsin-Madison</span
+				>
+				interested in <strong>web development</strong>,
 				<strong>machine learning</strong>, and
-				<strong>human-computer interaction</strong>. Equally at home in x86 assembly and React.
-				Sometimes in costume.
+				<strong>human-computer interaction</strong>.
 			</p>
 		</div>
 
-		<div class="hero-right relative hidden items-end justify-center overflow-hidden md:flex">
-			<div class="photo-arch">
-				<img src={me} alt="Andrew Lou" class="h-full w-full object-cover object-top" />
-			</div>
-			<div class="ticker-bar">
-				<span class="ticker-text accent-font">
-					Web Dev &nbsp;·&nbsp; Machine Learning &nbsp;·&nbsp; HCI &nbsp;·&nbsp; Operating Systems
-					&nbsp;·&nbsp; Algorithms &nbsp;·&nbsp; SvelteKit &nbsp;·&nbsp; Python &nbsp;·&nbsp; C
-					&nbsp;·&nbsp; Open Source &nbsp;·&nbsp; Web Dev &nbsp;·&nbsp; Machine Learning
-					&nbsp;·&nbsp; HCI &nbsp;·&nbsp; Operating Systems &nbsp;·&nbsp; Algorithms &nbsp;·&nbsp;
-					SvelteKit &nbsp;·&nbsp; Python &nbsp;·&nbsp; C &nbsp;·&nbsp; Open Source
-					&nbsp;&nbsp;&nbsp;
-				</span>
-			</div>
+		<!-- Portrait — sits in the same background, no panel -->
+		<div class="hero-portrait">
+			<img src={me} alt="Andrew Lou" class="portrait-img" />
 		</div>
 	</div>
 </section>
@@ -235,7 +224,31 @@
 		background: #f7f3f0;
 	}
 
-	.hero-avatar {
+	/* ── Layout ─────────────────────────────────────── */
+	.hero-inner {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		gap: 0;
+		padding-bottom: 28px; /* clear ticker */
+	}
+
+	/* ── Copy (left) ─────────────────────────────────── */
+	.hero-copy {
+		position: relative;
+		z-index: 10;
+		flex: 1 1 0;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.25rem;
+		padding: 0 4rem 0 10vw;
+		max-width: 640px;
+	}
+
+	.hero-avatar-mobile {
+		display: none;
 		width: 180px;
 		height: 180px;
 		border-radius: 50%;
@@ -245,24 +258,26 @@
 	}
 
 	.hero-tag {
-		font-size: 11px;
+		font-size: var(--p-text);
 		letter-spacing: 0.15em;
 		text-transform: uppercase;
 		color: #c0321a;
 		font-weight: 600;
 	}
 
+	/* h2 already inherits --h2-text from the global rule; only set layout/color here */
 	.hero-name {
-		font-size: clamp(40px, 6vw, 80px);
 		color: #1a1118;
+		margin: 0;
+		line-height: 1;
 	}
 
 	.hero-accent {
 		color: #c0321a;
 	}
 
+	/* p already inherits --p-text from the global rule; only set layout/color here */
 	.hero-desc {
-		font-size: clamp(14px, 1.2vw, 16px);
 		line-height: 1.75;
 		color: #6b5a54;
 		max-width: 380px;
@@ -274,54 +289,30 @@
 		font-weight: 600;
 	}
 
-	.btn-primary {
-		background: #1a1118;
-		color: #f7f3f0;
-		border: none;
-		padding: 0.65rem 1.6rem;
-		border-radius: 3px;
-		font-size: 13px;
-		text-decoration: none;
-		letter-spacing: 0.04em;
-		transition: opacity 0.15s;
-	}
-	.btn-primary:hover {
-		opacity: 0.8;
+	/* ── Portrait (right) ────────────────────────────── */
+	.hero-portrait {
+		position: relative;
+		z-index: 10;
+		flex: 0 0 auto;
+		/* generous right padding so the photo doesn't hug the edge */
+		padding-right: 10vw;
+		display: flex;
+		align-items: center;
+		height: 100%;
 	}
 
-	.btn-ghost {
-		background: none;
-		color: #1a1118;
-		border: 2px solid #1a1118;
-		padding: 0.6rem 1.6rem;
-		border-radius: 3px;
-		font-size: 13px;
-		text-decoration: none;
-		letter-spacing: 0.04em;
-		transition: opacity 0.15s;
-	}
-	.btn-ghost:hover {
-		opacity: 0.55;
+	.portrait-img {
+		display: block;
+		/* tall crop: fills vertically, lets face show from roughly mid-torso up */
+		height: 60%;
+		width: auto;
+		max-width: 340px;
+		object-fit: cover;
+		object-position: top;
+		border-radius: 140px 140px 0 0;
 	}
 
-	.hero-right {
-		background: #ece5df;
-		border-left: 1px solid rgba(26, 17, 24, 0.1);
-		z-index: 1;
-	}
-
-	.photo-arch {
-		width: 72%;
-		height: 90%;
-		position: absolute;
-		bottom: 0;
-		left: 50%;
-		transform: translateX(-50%);
-		border-radius: 120px 120px 0 0;
-		overflow: hidden;
-		z-index: 2;
-	}
-
+	/* ── Ticker ──────────────────────────────────────── */
 	.ticker-bar {
 		position: absolute;
 		bottom: 0;
@@ -350,6 +341,32 @@
 		}
 		to {
 			transform: translateX(-50%);
+		}
+	}
+
+	/* ── Responsive ──────────────────────────────────── */
+	@media (max-width: 768px) {
+		.hero-inner {
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			padding: 6rem 2rem 40px;
+			gap: 2rem;
+			text-align: center;
+		}
+
+		.hero-copy {
+			align-items: center;
+			padding: 0;
+			max-width: 100%;
+		}
+
+		.hero-avatar-mobile {
+			display: block;
+		}
+
+		.hero-portrait {
+			display: none;
 		}
 	}
 </style>

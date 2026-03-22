@@ -10,9 +10,14 @@
 	--intermediate-color: rgb(100, 100, 100);
 	--darker-color: rgb(31, 31, 31);
 
-	--h1-text: clamp(24px, 3vw + 0.25rem, 6rem);
-	--h2-text: clamp(20px, 1.75vw + 0.225rem, 4rem);
+	--h1-text: clamp(28px, 4vw + 0.25rem, 6rem);
+	--h2-text: clamp(24px, 2vw + 0.225rem, 4rem);
 	--p-text: clamp(16px, 1.25vw + 0.2rem, 4rem);
+}
+
+html {
+	padding: 0;
+	margin: 0;
 }
 
 body {

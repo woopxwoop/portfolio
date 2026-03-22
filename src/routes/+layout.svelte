@@ -57,7 +57,7 @@
 
 <div class="flex w-full flex-col items-center">
 	<nav
-		class="site-nav accent-font fixed z-30 flex w-full flex-row justify-start gap-4 p-4 px-16 backdrop-blur-sm"
+		class="site-nav accent-font fixed z-30 flex w-full flex-row justify-start gap-8 p-4 px-8 backdrop-blur-sm"
 		style="
 			background: {$navTheme.bg};
 			border-bottom-color: {$navTheme.border};
