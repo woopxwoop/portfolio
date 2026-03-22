@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import me from '$lib/assets/samui.jpg';
 	import { navTheme } from '$lib/stores/theme';
+	import Icon from '$lib/components/ui/Icon.svelte';
 
 	let canvas: HTMLCanvasElement;
 	let hero: HTMLElement;
@@ -29,7 +30,7 @@
 		navTheme.set({
 			bg: 'rgba(247, 243, 240, 0.88)',
 			fg: '#1a1118',
-			border: '#1a1118',
+			border: '#646464',
 			accent: '#c0321a'
 		});
 
@@ -186,9 +187,9 @@
 	});
 </script>
 
-<section bind:this={hero} class="h-svh w-full overflow-hidden">
-	<canvas bind:this={canvas} class="pointer-events-none absolute inset-0"></canvas>
-
+<canvas bind:this={canvas} class="pointer-events-none absolute inset-0" style="z-index: 20;"
+></canvas>
+<section bind:this={hero} class="relative flex h-svh w-full grow flex-col items-center gap-4 pb-16">
 	<!-- Single unified layout: text left, portrait right -->
 	<div class="hero-inner">
 		<!-- Text block -->
@@ -198,18 +199,41 @@
 				<img src={me} alt="Andrew Lou" class="h-full w-full object-cover" />
 			</div>
 
+			<div class="hero-tag accent-font">CS + CE · UW–Madison · 28</div>
+
 			<h1 class="hero-name accent-font">
 				Andrew <span class="hero-accent">Lou</span>
 			</h1>
 
 			<p class="hero-desc">
-				Computer Science and Engineering student at the University of <span class="hero-accent"
-					>Wisconsin-Madison</span
-				>
-				interested in <strong>web development</strong>,
-				<strong>machine learning</strong>, and
+				Computer science and engineering student at the University of Wisconsin-Madison interested
+				in <strong>web development, machine learning,</strong> and
 				<strong>human-computer interaction</strong>.
 			</p>
+
+			<div class="hero-links">
+				<a href="mailto:alou2@wisc.edu" aria-label="Email" class="hero-link">
+					<Icon icon="mail" />
+				</a>
+				<a
+					href="https://www.linkedin.com/in/andrew-lou-uw/"
+					aria-label="LinkedIn"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="hero-link"
+				>
+					<Icon icon="linkedin" />
+				</a>
+				<a
+					href="https://github.com/woopxwoop"
+					aria-label="GitHub"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="hero-link"
+				>
+					<Icon icon="github" />
+				</a>
+			</div>
 		</div>
 
 		<!-- Portrait — sits in the same background, no panel -->
@@ -217,11 +241,13 @@
 			<img src={me} alt="Andrew Lou" class="portrait-img" />
 		</div>
 	</div>
+	<div>hi?aosetuhoesantuh</div>
 </section>
 
 <style>
 	section {
 		background: #f7f3f0;
+		min-height: 400px;
 	}
 
 	/* ── Layout ─────────────────────────────────────── */
@@ -279,7 +305,7 @@
 	/* p already inherits --p-text from the global rule; only set layout/color here */
 	.hero-desc {
 		line-height: 1.75;
-		color: #6b5a54;
+		color: var(--intermediate-color);
 		max-width: 380px;
 		margin: 0;
 	}
@@ -287,6 +313,29 @@
 	.hero-desc strong {
 		color: #1a1118;
 		font-weight: 600;
+	}
+
+	/* ── Social links ────────────────────────────────── */
+	.hero-links {
+		display: flex;
+		flex-direction: row;
+		gap: 1.25rem;
+		align-items: center;
+	}
+
+	.hero-link {
+		display: block;
+		width: 1.5rem;
+		height: 1.5rem;
+		color: #1a1118;
+		transition:
+			color 0.15s,
+			transform 0.15s;
+	}
+
+	.hero-link:hover {
+		color: #c0321a;
+		transform: translateY(-2px);
 	}
 
 	/* ── Portrait (right) ────────────────────────────── */
@@ -304,44 +353,13 @@
 	.portrait-img {
 		display: block;
 		/* tall crop: fills vertically, lets face show from roughly mid-torso up */
-		height: 60%;
+		min-height: 200px;
 		width: auto;
-		max-width: 340px;
+		min-width: 180px;
+		height: 60%;
 		object-fit: cover;
 		object-position: top;
 		border-radius: 140px 140px 0 0;
-	}
-
-	/* ── Ticker ──────────────────────────────────────── */
-	.ticker-bar {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		height: 28px;
-		background: #c0321a;
-		overflow: hidden;
-		display: flex;
-		align-items: center;
-		z-index: 10;
-	}
-
-	.ticker-text {
-		display: inline-block;
-		white-space: nowrap;
-		animation: ticker 26s linear infinite;
-		font-size: 11px;
-		color: rgba(247, 243, 240, 0.9);
-		letter-spacing: 0.08em;
-	}
-
-	@keyframes ticker {
-		from {
-			transform: translateX(0);
-		}
-		to {
-			transform: translateX(-50%);
-		}
 	}
 
 	/* ── Responsive ──────────────────────────────────── */

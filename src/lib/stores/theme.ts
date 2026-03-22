@@ -10,6 +10,6 @@ export type NavTheme = {
 export const navTheme = writable<NavTheme>({
 	bg: 'rgba(234, 234, 234, 0.88)',
 	fg: '#1a1118',
-	border: '#1a1118',
+	border: '646464',
 	accent: '#c0321a'
 });

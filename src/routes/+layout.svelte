@@ -55,7 +55,7 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
-<div class="flex w-full flex-col items-center">
+<div class="flex w-full grow flex-col items-center">
 	<nav
 		class="site-nav accent-font fixed z-30 flex w-full flex-row justify-start gap-8 p-4 px-8 backdrop-blur-sm"
 		style="
