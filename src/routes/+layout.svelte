@@ -4,18 +4,18 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
-	import { resolve } from '$app/paths';
 	import type { Pathname } from '$app/types';
+	import { navTheme } from '$lib/stores/theme';
+	import { resolve } from '$app/paths';
 
 	let { children } = $props();
 
-	type NavItem = {
+	type navItem = {
 		path: Pathname;
 		text: string;
 	};
-
-	let navItems: NavItem[] = [
-		{ path: '/', text: 'Andrew' },
+	const navItems: navItem[] = [
+		{ path: '/', text: 'About' },
 		{ path: '/projects', text: 'Projects' },
 		{ path: '/interests', text: 'Interests' },
 		{ path: '/blog', text: 'Blog' },
@@ -58,11 +58,17 @@
 <div class="flex w-full flex-col items-center">
 	<nav
 		class="site-nav accent-font fixed z-30 flex w-full flex-row justify-start gap-4 p-4 px-16 backdrop-blur-sm"
+		style="
+			background: {$navTheme.bg};
+			border-bottom-color: {$navTheme.border};
+			--nav-fg: {$navTheme.fg};
+			--accent-color: {$navTheme.accent};
+		"
 	>
 		{#each navItems as navItem (navItem.path)}
 			<a
 				href={resolve(navItem.path)}
-				aria-current={page.url.pathname === navItem.path}
+				aria-current={page.url.pathname === navItem.path ? 'page' : undefined}
 				class="nav-link h2-text duration-150 hover:-translate-y-0.5"
 				class:nav-link--active={page.url.pathname === navItem.path}
 			>
@@ -71,7 +77,6 @@
 		{/each}
 	</nav>
 
-	<!-- No spacer here — full-bleed pages handle their own top offset -->
 	{@render children()}
 
 	<footer class="invert-theme flex w-full justify-center">
@@ -100,30 +105,25 @@
 </div>
 
 <style>
-	/*
-	  Nav reads --nav-bg, --nav-fg, --nav-border set per page via :global(:root).
-	  Fallbacks keep it working on pages that haven't defined a theme yet.
-	*/
 	.site-nav {
-		background: var(--nav-bg, rgba(234, 234, 234, 0.88));
-		border-bottom: 2px solid var(--nav-border, var(--foreground-color));
+		border-bottom: 2px solid;
 		transition:
 			background 0.4s,
 			border-color 0.4s;
 	}
 
 	.nav-link {
-		color: var(--nav-fg, var(--foreground-color));
+		color: var(--nav-fg);
 		text-decoration: none;
 		transition: color 0.15s;
 	}
 
 	.nav-link:hover {
-		color: var(--accent-color, var(--nav-fg, var(--foreground-color)));
+		color: var(--accent-color);
 	}
 
 	.nav-link--active {
-		color: var(--accent-color, var(--foreground-color));
+		color: var(--accent-color);
 	}
 
 	.footer-link {

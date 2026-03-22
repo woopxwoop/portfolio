@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import me from '$lib/assets/samui.jpg';
-	import { resolve } from '$app/paths';
+	import { navTheme } from '$lib/stores/theme';
 
 	let canvas: HTMLCanvasElement;
 	let hero: HTMLElement;
@@ -26,6 +26,13 @@
 	};
 
 	onMount(() => {
+		navTheme.set({
+			bg: 'rgba(247, 243, 240, 0.88)',
+			fg: '#1a1118',
+			border: '#1a1118',
+			accent: '#c0321a'
+		});
+
 		const ctx = canvas.getContext('2d')!;
 		const leaves: Leaf[] = [];
 		let lastX = -999,
@@ -179,17 +186,14 @@
 	});
 </script>
 
-<!-- Full-bleed hero — no wrapper padding, sits edge to edge -->
 <section bind:this={hero} class="relative w-full overflow-hidden" style="height: 100svh;">
 	<canvas bind:this={canvas} class="pointer-events-none absolute inset-0" style="z-index: 20;"
 	></canvas>
 
 	<div class="grid h-full grid-cols-1 md:grid-cols-2">
-		<!-- Left: text — centered on mobile, left-aligned on desktop -->
 		<div
 			class="relative z-10 flex flex-col items-center justify-center gap-5 px-10 pt-32 pb-16 text-center md:items-start md:px-16 md:text-left"
 		>
-			<!-- Mobile-only avatar -->
 			<div class="hero-avatar block md:hidden">
 				<img src={me} alt="Andrew Lou" class="h-full w-full object-cover object-top" />
 			</div>
@@ -206,20 +210,8 @@
 				<strong>human-computer interaction</strong>. Equally at home in x86 assembly and React.
 				Sometimes in costume.
 			</p>
-
-			<div class="flex flex-wrap justify-center gap-4 md:justify-start">
-				<a href={resolve('/projects')} class="btn-primary accent-font">View Projects</a>
-				<a
-					href="https://drive.google.com/file/d/1ApYbuI7CXlhGWDoBljST8vUn6hR7HXcq/view?usp=sharing"
-					target="_blank"
-					class="btn-ghost accent-font"
-				>
-					Resume
-				</a>
-			</div>
 		</div>
 
-		<!-- Right: photo panel — hidden on mobile -->
 		<div class="hero-right relative hidden items-end justify-center overflow-hidden md:flex">
 			<div class="photo-arch">
 				<img src={me} alt="Andrew Lou" class="h-full w-full object-cover object-top" />
@@ -239,14 +231,6 @@
 </section>
 
 <style>
-	/* ── Page theme ── */
-	:global(:root) {
-		--accent-color: #c0321a;
-		--nav-bg: rgba(247, 243, 240, 0.88);
-		--nav-fg: #1a1118;
-		--nav-border: #1a1118;
-	}
-
 	section {
 		background: #f7f3f0;
 	}
@@ -257,14 +241,14 @@
 		border-radius: 50%;
 		overflow: hidden;
 		flex-shrink: 0;
-		border: 2px solid var(--accent-color);
+		border: 2px solid #c0321a;
 	}
 
 	.hero-tag {
 		font-size: 11px;
 		letter-spacing: 0.15em;
 		text-transform: uppercase;
-		color: var(--accent-color);
+		color: #c0321a;
 		font-weight: 600;
 	}
 
@@ -274,7 +258,7 @@
 	}
 
 	.hero-accent {
-		color: var(--accent-color);
+		color: #c0321a;
 	}
 
 	.hero-desc {
@@ -344,7 +328,7 @@
 		left: 0;
 		right: 0;
 		height: 28px;
-		background: var(--accent-color);
+		background: #c0321a;
 		overflow: hidden;
 		display: flex;
 		align-items: center;
