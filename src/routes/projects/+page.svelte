@@ -1,18 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { navTheme } from '$lib/stores/theme';
 	import { allProjects } from '$lib/data/projects';
 	import { resolve } from '$app/paths';
-
-	onMount(() => {
-		navTheme.set({
-			bg: 'rgba(247, 243, 240, 0.88)',
-			fg: '#1a1118',
-			border: '#646464',
-			accent: '#c0321a'
-		});
-	});
 </script>
+
+<svelte:head>
+	<title>Andrew's Projects!</title>
+	<meta name="description" content="Andrew Lou's projects" />
+</svelte:head>
 
 <main class="pt-32">
 	<section class="grid-section">
@@ -26,7 +20,7 @@
 					aria-label={project.title}
 				>
 					<div class="brick-image">
-						<img src={project.image} alt={project.title} />
+						<img src={project.image} alt="thumbnail of {project.title}" />
 					</div>
 
 					<div class="brick-footer">
@@ -48,7 +42,6 @@
 	main {
 		width: 100%;
 		min-height: 100svh;
-		background: #f7f3f0;
 	}
 
 	/* ── Masonry grid ────────────────────────────────── */
@@ -73,7 +66,6 @@
 		position: relative;
 		border-radius: 6px;
 		overflow: hidden;
-		background: var(--slightlydarker-color);
 		text-decoration: none;
 		display: block;
 	}
@@ -118,7 +110,8 @@
 		left: 0;
 		right: 0;
 		padding: 0.875rem 1.25rem;
-		background: rgba(10, 6, 10, 0.82);
+		background: rgb(from var(--season-accent) r g b / 0.82);
+		color: var(--season-bg);
 		backdrop-filter: blur(2px);
 		display: flex;
 		flex-direction: column;
@@ -140,21 +133,18 @@
 		font-size: 12px;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: rgba(247, 243, 240, 0.8);
-		border: 1px solid rgba(247, 243, 240, 0.3);
+		border: 1px solid rgb(from var(--season-bg) r g b / 0.3);
 		padding: 0.2em 0.55em;
 		border-radius: 999px;
 	}
 
 	.brick-title {
 		margin: 0;
-		color: #f7f3f0;
 		line-height: 1.05;
 	}
 
 	.brick-desc {
 		margin: 0;
-		color: rgba(247, 243, 240, 0);
 		font-size: var(--p-text);
 		line-height: 1.4;
 		max-height: 0;
@@ -165,7 +155,7 @@
 	}
 
 	.brick:hover .brick-desc {
-		color: rgba(247, 243, 240, 0.85);
+		color: rgb(from var(--season-bg) r g b / 0.85);
 		max-height: 4rem;
 	}
 

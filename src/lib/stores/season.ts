@@ -1,10 +1,10 @@
 import { writable, derived } from 'svelte/store';
 import { browser } from '$app/environment';
 
-export type SeasonName = 'fall' | 'winter' | 'spring' | 'summer';
+export type SeasonName = 'Fall' | 'Winter' | 'Spring' | 'Summer';
 
 export type SeasonConfig = {
-	name: string;
+	name: SeasonName;
 	bg: string;
 	fg: string;
 	mid: string;
@@ -20,7 +20,7 @@ export type SeasonConfig = {
 };
 
 export const seasons: Record<SeasonName, SeasonConfig> = {
-	fall: {
+	Fall: {
 		name: 'Fall',
 		bg: '#f7f3f0',
 		fg: '#1a1118',
@@ -35,7 +35,7 @@ export const seasons: Record<SeasonName, SeasonConfig> = {
 		particleDecay: [0.003, 0.003],
 		particleType: 'leaf'
 	},
-	winter: {
+	Winter: {
 		name: 'Winter',
 		bg: '#090e18',
 		fg: '#ccdcee',
@@ -50,7 +50,7 @@ export const seasons: Record<SeasonName, SeasonConfig> = {
 		particleDecay: [0.0007, 0.0008],
 		particleType: 'snowflake'
 	},
-	spring: {
+	Spring: {
 		name: 'Spring',
 		bg: '#fdf4f7',
 		fg: '#1a1118',
@@ -65,7 +65,7 @@ export const seasons: Record<SeasonName, SeasonConfig> = {
 		particleDecay: [0.002, 0.003],
 		particleType: 'sakura'
 	},
-	summer: {
+	Summer: {
 		name: 'Summer',
 		bg: '#110d02',
 		fg: '#f5e8c0',
@@ -82,17 +82,17 @@ export const seasons: Record<SeasonName, SeasonConfig> = {
 	}
 };
 
-function getSeasonByDate(): SeasonName {
-	const m = new Date().getMonth();
-	if (m >= 2 && m <= 4) return 'spring';
-	if (m >= 5 && m <= 7) return 'summer';
-	if (m >= 8 && m <= 10) return 'fall';
-	return 'winter';
-}
+// function getSeasonByDate(): SeasonName {
+// 	const m = new Date().getMonth();
+// 	if (m >= 2 && m <= 4) return 'Spring';
+// 	if (m >= 5 && m <= 7) return 'Summer';
+// 	if (m >= 8 && m <= 10) return 'Fall';
+// 	return 'Winter';
+// }
 
 const stored = browser ? (localStorage.getItem('active-season') as SeasonName | null) : null;
 
-export const activeSeason = writable<SeasonName>(stored ?? getSeasonByDate());
+export const activeSeason = writable<SeasonName>(stored ?? 'Fall');
 
 if (browser) {
 	activeSeason.subscribe((s) => localStorage.setItem('active-season', s));

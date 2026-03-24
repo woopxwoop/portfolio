@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import me from '$lib/assets/samui.jpg';
-	import { navTheme } from '$lib/stores/theme';
 	import Icon from '$lib/components/ui/Icon.svelte';
+	import { activeSeason, currentSeason, seasons, type SeasonName } from '$lib/stores/season';
 
 	let canvas: HTMLCanvasElement;
 	let hero: HTMLElement;
@@ -18,94 +18,6 @@
 	let windStreaks: WindStreak[] = $state([]);
 	let streakId = 0;
 
-	type Season = {
-		name: string;
-		bg: string;
-		fg: string;
-		mid: string;
-		accent: string;
-		navBg: string;
-		navBorder: string;
-		particleColors: string[];
-		windColor: string;
-		windEcho: string;
-		gustInterval: [number, number];
-		particleDecay: [number, number];
-		particleType: 'leaf' | 'snowflake' | 'sakura' | 'firefly';
-	};
-
-	const seasons: Record<string, Season> = {
-		fall: {
-			name: 'Fall',
-			bg: '#f7f3f0',
-			fg: '#1a1118',
-			mid: '#646464',
-			accent: '#c0321a',
-			navBg: 'rgba(247,243,240,0.88)',
-			navBorder: '#646464',
-			particleColors: ['#b02a14', '#c0321a', '#a82010', '#cc3a1e', '#961e0e', '#d44422', '#8a1a0c'],
-			windColor: 'rgba(80,215,160,0.75)',
-			windEcho: 'rgba(160,245,210,0.35)',
-			gustInterval: [240, 480],
-			particleDecay: [0.003, 0.003],
-			particleType: 'leaf'
-		},
-		winter: {
-			name: 'Winter',
-			bg: '#090e18',
-			fg: '#ccdcee',
-			mid: '#7090aa',
-			accent: '#5b9fd8',
-			navBg: 'rgba(9,14,24,0.88)',
-			navBorder: '#1a2a40',
-			particleColors: ['#cce8f4', '#a8d4e8', '#e8f4fc', '#dff0f8', '#b8dff0', '#ffffff'],
-			windColor: 'rgba(180,220,255,0.45)',
-			windEcho: 'rgba(220,240,255,0.2)',
-			gustInterval: [180, 360],
-			particleDecay: [0.0007, 0.0008],
-			particleType: 'snowflake'
-		},
-		spring: {
-			name: 'Spring',
-			bg: '#fdf4f7',
-			fg: '#1a1118',
-			mid: '#7a5060',
-			accent: '#c4527a',
-			navBg: 'rgba(253,244,247,0.88)',
-			navBorder: '#d4a0b8',
-			particleColors: ['#f7c5d5', '#f4a7be', '#e8829e', '#fadadd', '#f0b8c8', '#d4688a', '#fce4ec'],
-			windColor: 'rgba(212,104,138,0.45)',
-			windEcho: 'rgba(240,180,210,0.22)',
-			gustInterval: [300, 540],
-			particleDecay: [0.002, 0.003],
-			particleType: 'sakura'
-		},
-		summer: {
-			name: 'Summer',
-			bg: '#110d02',
-			fg: '#f5e8c0',
-			mid: '#9a8050',
-			accent: '#e8a820',
-			navBg: 'rgba(17,13,2,0.88)',
-			navBorder: '#2a2008',
-			particleColors: ['#f0e040', '#e8d820', '#ffd840', '#f5e880', '#d4b018', '#ffe870'],
-			windColor: 'rgba(232,200,32,0.12)',
-			windEcho: 'rgba(240,220,80,0.06)',
-			gustInterval: [900, 1800],
-			particleDecay: [0.0015, 0.002],
-			particleType: 'firefly'
-		}
-	};
-
-	function getSeasonByDate(): string {
-		const m = new Date().getMonth();
-		if (m >= 2 && m <= 4) return 'spring';
-		if (m >= 5 && m <= 7) return 'summer';
-		if (m >= 8 && m <= 10) return 'fall';
-		return 'winter';
-	}
-
-	let activeSeason = $state(getSeasonByDate());
 	let paused = $state(
 		typeof localStorage !== 'undefined' ? localStorage.getItem('hero-paused') === 'true' : false
 	);
@@ -116,21 +28,16 @@
 		}
 	});
 
-	$effect(() => {
-		const s = seasons[activeSeason];
-		navTheme.set({
-			bg: s.navBg,
-			fg: s.fg,
-			border: s.navBorder,
-			accent: s.accent
-		});
-	});
-
 	let clearEffects: () => void = () => {};
 
 	function togglePaused() {
 		paused = !paused;
 		if (paused) clearEffects();
+	}
+
+	function setSeason(s: SeasonName) {
+		activeSeason.set(s);
+		clearEffects();
 	}
 
 	type Particle = {
@@ -167,7 +74,8 @@
 		let fireflyTimer = 0;
 
 		function scheduleNextGust() {
-			const [min, max] = seasons[activeSeason].gustInterval;
+			const s = $currentSeason;
+			const [min, max] = s.gustInterval;
 			windTimer = min + Math.floor(Math.random() * (max - min));
 		}
 		scheduleNextGust();
@@ -189,14 +97,12 @@
 		window.addEventListener('resize', resize);
 
 		function randomColor(): string {
-			const colors = seasons[activeSeason].particleColors;
+			const colors = $currentSeason.particleColors;
 			return colors[Math.floor(Math.random() * colors.length)];
 		}
 
-		// ── Spawn helpers ─────────────────────────────────
-
 		function spawnParticle(x: number, y: number, vx: number, vy: number) {
-			const { particleType, particleDecay } = seasons[activeSeason];
+			const { particleType, particleDecay } = $currentSeason;
 			const [d0, d1] = particleDecay;
 
 			if (particleType === 'firefly') {
@@ -248,7 +154,7 @@
 		}
 
 		function spawnWindParticle() {
-			const { particleType, particleDecay } = seasons[activeSeason];
+			const { particleType, particleDecay } = $currentSeason;
 			if (particleType === 'firefly') return;
 			const [d0, d1] = particleDecay;
 
@@ -274,7 +180,6 @@
 				return;
 			}
 
-			// leaf / sakura — blow in from left
 			const isSakura = particleType === 'sakura';
 			particles.push({
 				x: -20,
@@ -297,7 +202,7 @@
 		}
 
 		function spawnFireflyAmbient() {
-			const colors = seasons.summer.particleColors;
+			const colors = seasons.Summer.particleColors;
 			particles.push({
 				x: 30 + Math.random() * (canvas.width - 60),
 				y: 20 + Math.random() * (canvas.height - 40),
@@ -318,8 +223,6 @@
 			});
 		}
 
-		// ── Draw functions ────────────────────────────────
-
 		function drawLeaf(
 			x: number,
 			y: number,
@@ -334,7 +237,6 @@
 			ctx.scale(size, size);
 			ctx.globalAlpha = opacity;
 			ctx.fillStyle = color;
-
 			const pts: [number, number][] = [
 				[0, -1],
 				[0.22, -0.78],
@@ -357,17 +259,15 @@
 				[-0.42, -0.82],
 				[-0.22, -0.78]
 			];
-
 			ctx.beginPath();
 			ctx.moveTo(pts[0][0], pts[0][1]);
 			for (let i = 1; i < pts.length; i++) {
-				const prev = pts[i - 1],
-					curr = pts[i];
-				ctx.quadraticCurveTo(prev[0], prev[1], (prev[0] + curr[0]) / 2, (prev[1] + curr[1]) / 2);
+				const p = pts[i - 1],
+					c = pts[i];
+				ctx.quadraticCurveTo(p[0], p[1], (p[0] + c[0]) / 2, (p[1] + c[1]) / 2);
 			}
 			ctx.closePath();
 			ctx.fill();
-
 			ctx.strokeStyle = 'rgba(0,0,0,0.1)';
 			ctx.lineWidth = 0.04;
 			ctx.beginPath();
@@ -377,9 +277,9 @@
 			ctx.lineTo(0.45, -0.05);
 			ctx.moveTo(0, -0.3);
 			ctx.lineTo(-0.45, -0.05);
-			ctx.moveTo(0, 0.0);
+			ctx.moveTo(0, 0);
 			ctx.lineTo(0.28, 0.3);
-			ctx.moveTo(0, 0.0);
+			ctx.moveTo(0, 0);
 			ctx.lineTo(-0.28, 0.3);
 			ctx.stroke();
 			ctx.restore();
@@ -400,18 +300,17 @@
 			ctx.strokeStyle = color;
 			ctx.lineWidth = Math.max(0.7, size * 0.09);
 			ctx.lineCap = 'round';
-
 			for (let i = 0; i < 6; i++) {
 				const a = (i / 6) * Math.PI * 2;
-				const ex = Math.cos(a) * size;
-				const ey = Math.sin(a) * size;
+				const ex = Math.cos(a) * size,
+					ey = Math.sin(a) * size;
 				ctx.beginPath();
 				ctx.moveTo(0, 0);
 				ctx.lineTo(ex, ey);
 				ctx.stroke();
 				for (const bp of [0.38, 0.65]) {
-					const bx = Math.cos(a) * size * bp;
-					const by = Math.sin(a) * size * bp;
+					const bx = Math.cos(a) * size * bp,
+						by = Math.sin(a) * size * bp;
 					const bl = size * 0.28 * (1.15 - bp);
 					ctx.beginPath();
 					ctx.moveTo(bx, by);
@@ -439,7 +338,6 @@
 			ctx.rotate(angle);
 			ctx.globalAlpha = opacity;
 			ctx.fillStyle = color;
-
 			for (let i = 0; i < 5; i++) {
 				ctx.save();
 				ctx.rotate((i / 5) * Math.PI * 2);
@@ -448,14 +346,10 @@
 				ctx.fill();
 				ctx.restore();
 			}
-
-			// notch at petal tips
 			ctx.fillStyle = 'rgba(255,210,225,0.85)';
 			ctx.beginPath();
 			ctx.arc(0, 0, size * 0.19, 0, Math.PI * 2);
 			ctx.fill();
-
-			// stamens
 			ctx.strokeStyle = 'rgba(200,80,120,0.5)';
 			ctx.lineWidth = size * 0.04;
 			ctx.lineCap = 'round';
@@ -492,16 +386,13 @@
 			ctx.restore();
 		}
 
-		// ── Wind gust SVG streaks ─────────────────────────
-
 		function spawnSvgGust(strength: number, duration: number) {
-			if (seasons[activeSeason].particleType === 'firefly') return;
+			if ($currentSeason.particleType === 'firefly') return;
 			const w = hero.offsetWidth,
 				h = hero.offsetHeight;
 			const count = 3 + Math.floor(strength * 2);
 			const dur = ((duration * 0.6) / 1000).toFixed(2);
 			const newStreaks: WindStreak[] = [];
-
 			for (let i = 0; i < count; i++) {
 				const sy = 15 + Math.random() * (h - 30);
 				const swing = Math.min(sy, h - sy, 55);
@@ -520,7 +411,6 @@
 					len: w + 40
 				});
 			}
-
 			windStreaks = [...windStreaks, ...newStreaks];
 			const ids = newStreaks.map((s) => s.id);
 			setTimeout(
@@ -531,16 +421,13 @@
 			);
 		}
 
-		// ── Mouse interaction ─────────────────────────────
-
 		function onMouseMove(e: MouseEvent) {
 			const rect = hero.getBoundingClientRect();
-			const mx = e.clientX - rect.left;
-			const my = e.clientY - rect.top;
+			const mx = e.clientX - rect.left,
+				my = e.clientY - rect.top;
 			const dx = mx - lastX,
 				dy = my - lastY;
 			const speed = Math.sqrt(dx * dx + dy * dy);
-
 			if (speed > 4 && spawnCooldown <= 0) {
 				const count = Math.min(3, Math.floor(speed / 10) + 1);
 				for (let i = 0; i < count; i++) {
@@ -552,8 +439,6 @@
 			lastY = my;
 		}
 
-		// ── Animation loop ────────────────────────────────
-
 		function animate() {
 			if (paused) {
 				raf = requestAnimationFrame(animate);
@@ -562,9 +447,8 @@
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			if (spawnCooldown > 0) spawnCooldown--;
 
-			const pType = seasons[activeSeason].particleType;
+			const pType = $currentSeason.particleType;
 
-			// Firefly ambient population
 			if (pType === 'firefly') {
 				fireflyTimer--;
 				if (fireflyTimer <= 0 && particles.length < 60) {
@@ -574,7 +458,6 @@
 				}
 			}
 
-			// Wind gust system
 			windTimer--;
 			if (windTimer <= 0) {
 				windTarget = 1.2 + Math.random() * 1.8;
@@ -593,10 +476,8 @@
 			}
 			if (gustSpawnCooldown > 0) gustSpawnCooldown--;
 
-			// Update & draw particles
 			for (let i = particles.length - 1; i >= 0; i--) {
 				const p = particles[i];
-
 				if (pType === 'firefly') {
 					p.vx += (Math.random() - 0.5) * 0.045;
 					p.vy += (Math.random() - 0.5) * 0.045;
@@ -609,7 +490,6 @@
 					p.y += p.vy;
 					p.pulse += p.pulseSpeed;
 					p.life -= p.decay;
-					// wrap edges
 					if (p.x < -30) p.x = canvas.width + 10;
 					if (p.x > canvas.width + 30) p.x = -10;
 					if (p.y < -30) p.y = canvas.height + 10;
@@ -624,7 +504,6 @@
 					p.angle += p.spin + windStrength * 0.003;
 					p.life -= p.decay;
 				} else {
-					// leaf / sakura
 					p.sway += p.swaySpeed;
 					p.vx += windStrength * 0.18;
 					p.vy -= windStrength * 0.02;
@@ -641,9 +520,7 @@
 					particles.splice(i, 1);
 					continue;
 				}
-
 				const fade = p.life < 0.25 ? p.life / 0.25 : 1;
-
 				if (pType === 'firefly') {
 					const pulse = 0.35 + 0.65 * Math.abs(Math.sin(p.pulse));
 					drawFirefly(p.x, p.y, p.size, p.opacity * fade * pulse, p.color);
@@ -655,7 +532,6 @@
 					drawLeaf(p.x, p.y, p.size, p.angle, p.color, p.opacity * fade);
 				}
 			}
-
 			raf = requestAnimationFrame(animate);
 		}
 
@@ -681,7 +557,7 @@
 		<path
 			d={streak.d}
 			fill="none"
-			stroke={seasons[activeSeason].windColor}
+			stroke={$currentSeason.windColor}
 			stroke-width={streak.width}
 			stroke-linecap="round"
 			stroke-dasharray={streak.len}
@@ -692,7 +568,7 @@
 		<path
 			d={streak.d}
 			fill="none"
-			stroke={seasons[activeSeason].windEcho}
+			stroke={$currentSeason.windEcho}
 			stroke-width={parseFloat(streak.width) * 0.4}
 			stroke-linecap="round"
 			stroke-dasharray={streak.len}
@@ -703,16 +579,7 @@
 	{/each}
 </svg>
 
-<section
-	bind:this={hero}
-	class="relative flex h-svh w-full flex-col items-center"
-	style="
-		background: {seasons[activeSeason].bg};
-		--hero-fg: {seasons[activeSeason].fg};
-		--hero-mid: {seasons[activeSeason].mid};
-		--hero-accent: {seasons[activeSeason].accent};
-	"
->
+<section bind:this={hero} class="relative flex h-svh w-full flex-col items-center">
 	<div class="hero-inner">
 		<div class="hero-copy">
 			<div class="hero-avatar-mobile">
@@ -767,14 +634,11 @@
 					{#each Object.keys(seasons) as s (s)}
 						<button
 							class="season-btn"
-							class:active={activeSeason === s}
-							onclick={() => {
-								activeSeason = s;
-								clearEffects();
-							}}
-							aria-label={seasons[s].name}
-							style={activeSeason === s ? `--season-color: ${seasons[s].accent}` : ''}
-							>{seasons[s].name}</button
+							class:active={$activeSeason === s}
+							onclick={() => setSeason(s as SeasonName)}
+							aria-label={seasons[s as keyof typeof seasons].name}
+							style={$activeSeason === s ? `--season-color: var(--season-accent)` : ''}
+							>{seasons[s as keyof typeof seasons].name}</button
 						>
 					{/each}
 				</div>
@@ -811,11 +675,11 @@
 	}
 
 	section {
+		background: var(--season-bg, #f7f3f0);
 		min-height: 400px;
 		transition: background 0.5s ease;
 	}
 
-	/* ── Layout ──────────────────────────────────────── */
 	.hero-inner {
 		width: 90%;
 		max-width: 1100px;
@@ -834,7 +698,6 @@
 		flex: 0 0 auto;
 		display: flex;
 		align-items: flex-start;
-		height: auto;
 	}
 
 	.portrait-img {
@@ -858,7 +721,6 @@
 		max-width: 640px;
 	}
 
-	/* ── Avatar (mobile only) ────────────────────────── */
 	.hero-avatar-mobile {
 		display: none;
 		width: 180px;
@@ -866,47 +728,45 @@
 		border-radius: 50%;
 		overflow: hidden;
 		flex-shrink: 0;
-		border: 2px solid var(--hero-accent);
+		border: 2px solid var(--season-accent, #c0321a);
 		transition: border-color 0.4s ease;
 	}
 
-	/* ── Text ────────────────────────────────────────── */
 	.hero-tag {
 		font-size: var(--p-text);
 		letter-spacing: 0.15em;
 		text-transform: uppercase;
-		color: var(--hero-accent);
+		color: var(--season-accent, #c0321a);
 		font-weight: 600;
 		transition: color 0.4s ease;
 	}
 
 	.hero-name {
-		color: var(--hero-fg);
+		color: var(--season-fg, #1a1118);
 		margin: 0;
 		line-height: 1;
 		transition: color 0.4s ease;
 	}
 
 	.hero-accent {
-		color: var(--hero-accent);
+		color: var(--season-accent, #c0321a);
 		transition: color 0.4s ease;
 	}
 
 	.hero-desc {
 		line-height: 1.75;
-		color: var(--hero-mid);
+		color: var(--season-mid, #646464);
 		max-width: 640px;
 		margin: 0;
 		transition: color 0.4s ease;
 	}
 
 	.hero-desc strong {
-		color: var(--hero-fg);
+		color: var(--season-fg, #1a1118);
 		font-weight: 600;
 		transition: color 0.4s ease;
 	}
 
-	/* ── Links ───────────────────────────────────────── */
 	.hero-links {
 		display: flex;
 		flex-direction: row;
@@ -918,18 +778,17 @@
 		display: block;
 		width: 2rem;
 		height: 2rem;
-		color: var(--hero-fg);
+		color: var(--season-fg, #1a1118);
 		transition:
 			color 0.15s,
 			transform 0.15s;
 	}
 
 	.hero-link:hover {
-		color: var(--hero-accent);
+		color: var(--season-accent, #c0321a);
 		transform: translateY(-2px);
 	}
 
-	/* ── Effects controls ────────────────────────────── */
 	.hero-effects {
 		display: flex;
 		align-items: center;
@@ -940,23 +799,23 @@
 	.effects-toggle {
 		font-size: 0.75rem;
 		font-family: 'Source Sans Pro', sans-serif;
-		color: var(--hero-mid);
+		color: var(--season-fg);
 		background: none;
-		border: 1px solid var(--hero-mid);
+		border: 1px solid var(--season-fg);
 		padding: 0.2em 0.65em;
 		border-radius: 999px;
 		cursor: pointer;
+		opacity: 0.8;
+		letter-spacing: 0.04em;
 		transition:
 			color 0.15s,
 			border-color 0.15s,
 			opacity 0.15s;
-		letter-spacing: 0.04em;
-		opacity: 0.55;
 	}
 
 	.effects-toggle:hover {
-		color: var(--hero-fg);
-		border-color: var(--hero-fg);
+		color: var(--season-fg, #1a1118);
+		border-color: var(--season-fg, #1a1118);
 		opacity: 1;
 	}
 
@@ -968,32 +827,26 @@
 	.season-btn {
 		font-size: 0.7rem;
 		font-family: 'Source Sans Pro', sans-serif;
-		color: var(--hero-mid);
+		color: var(--season-fg);
 		background: none;
 		border: 1px solid transparent;
 		padding: 0.15em 0.5em;
 		border-radius: 999px;
 		cursor: pointer;
+		opacity: 0.8;
+		letter-spacing: 0.04em;
 		transition:
 			color 0.15s,
 			border-color 0.15s,
 			opacity 0.15s;
-		letter-spacing: 0.04em;
-		opacity: 0.6;
-	}
-
-	.season-btn:hover {
-		color: var(--hero-fg);
-		opacity: 1;
 	}
 
 	.season-btn.active {
-		color: var(--season-color);
+		color: var(--season-fg);
 		border-color: var(--season-color);
 		opacity: 1;
 	}
 
-	/* ── Responsive ──────────────────────────────────── */
 	@media (max-width: 768px) {
 		.hero-inner {
 			flex-direction: column;
@@ -1003,16 +856,13 @@
 			gap: 2rem;
 			text-align: center;
 		}
-
 		.hero-copy {
 			align-items: center;
 			max-width: 100%;
 		}
-
 		.hero-avatar-mobile {
 			display: block;
 		}
-
 		.hero-portrait {
 			display: none;
 		}

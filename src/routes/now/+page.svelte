@@ -1,16 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { navTheme } from '$lib/stores/theme';
 	import { current, archive } from '$lib/data/now';
-
-	onMount(() => {
-		navTheme.set({
-			bg: 'rgba(247, 243, 240, 0.88)',
-			fg: '#1a1118',
-			border: '#646464',
-			accent: '#c0321a'
-		});
-	});
 
 	const formatted = (iso: string) => {
 		const [y, m, d] = iso.split('-').map(Number);
@@ -27,7 +16,7 @@
 		<time datetime={current.date}>{formatted(current.date)}</time>
 
 		{#each current.sections as { heading, body } (heading)}
-			<h2>{heading}</h2>
+			<h2 class="heading">{heading}</h2>
 			<p>{body}</p>
 		{/each}
 
@@ -43,9 +32,6 @@
 </div>
 
 <style>
-	.main-container {
-		background: #f7f3f0;
-	}
 	main {
 		max-width: 640px;
 		margin: 0 auto;
@@ -58,7 +44,6 @@
 		font-family: 'Source Sans Pro', sans-serif;
 		font-size: 1.4rem;
 		letter-spacing: 0.05em;
-		color: var(--intermediate-color);
 		margin-bottom: 2.5rem;
 	}
 
@@ -71,8 +56,7 @@
 
 	p {
 		font-size: 1.2rem;
-		color: var(--intermediate-color);
-		line-height: 1.75;
+		line-height: 2;
 		margin: 0;
 	}
 
@@ -86,5 +70,9 @@
 		font-size: 1rem;
 		color: var(--intermediate-color);
 		line-height: 2;
+	}
+
+	.heading {
+		color: var(--season-mid);
 	}
 </style>

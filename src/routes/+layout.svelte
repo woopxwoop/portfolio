@@ -6,9 +6,30 @@
 	import { page } from '$app/state';
 	import type { Pathname } from '$app/types';
 	import { navTheme } from '$lib/stores/theme';
+	import { currentSeason } from '$lib/stores/season';
 	import { resolve } from '$app/paths';
+	import { browser } from '$app/environment';
 
 	let { children } = $props();
+
+	// Apply season CSS vars to :root and keep navTheme in sync
+	$effect(() => {
+		if (!browser) return;
+		const s = $currentSeason;
+		const root = document.documentElement;
+		root.style.setProperty('--season-bg', s.bg);
+		root.style.setProperty('--season-fg', s.fg);
+		root.style.setProperty('--season-mid', s.mid);
+		root.style.setProperty('--season-accent', s.accent);
+		root.style.setProperty('--season-nav-bg', s.bg);
+		root.style.setProperty('--season-nav-border', s.navBorder);
+		navTheme.set({
+			bg: s.bg,
+			fg: s.fg,
+			border: s.navBorder,
+			accent: s.accent
+		});
+	});
 
 	type navItem = {
 		path: Pathname;
@@ -96,8 +117,8 @@
 	.site-nav {
 		border-bottom: 2px solid;
 		transition:
-			background 0.4s,
-			border-color 0.4s;
+			background 0.5s ease,
+			border-color 0.5s ease;
 	}
 
 	.nav-inner {
@@ -143,8 +164,8 @@
 
 	footer {
 		width: 100%;
-		background: #f7f3f0;
-		color: var(--intermediate-color);
+		background: var(--season-bg, #f7f3f0);
+		color: var(--season-fg, #646464);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -153,7 +174,11 @@
 		padding: 1.25rem 2rem;
 		font-family: 'Source Sans Pro', sans-serif;
 		font-size: 0.85rem;
-		border-top: 1px solid var(--slightlydarker-color);
+		border-top: 1px solid var(--season-nav-border, var(--slightlydarker-color));
+		transition:
+			background 0.5s ease,
+			color 0.5s ease,
+			border-color 0.5s ease;
 	}
 
 	footer span,
@@ -162,17 +187,17 @@
 	}
 
 	.sep {
-		opacity: 0.4;
 		user-select: none;
 	}
 
 	.footer-link {
-		color: var(--intermediate-color);
 		text-decoration: none;
 		transition: color 0.15s;
 	}
 
 	.footer-link:hover {
-		color: #c0321a;
+		color: var(--season-accent, #c0321a);
+
+		text-decoration: underline;
 	}
 </style>
