@@ -1,21 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { navTheme } from '$lib/stores/theme';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	const project = $derived(data.project);
-
-	onMount(() => {
-		navTheme.set({
-			bg: 'rgba(234, 234, 234, 0.88)',
-			fg: '#1a1118',
-			border: '#1a1118',
-			accent: '#c0321a'
-		});
-	});
 </script>
 
 <svelte:head>
