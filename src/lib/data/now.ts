@@ -22,6 +22,10 @@ export const nowEntries: NowEntry[] = [
 			{
 				heading: 'Thinking about',
 				body: 'Summer internship applications. Might pick up a book on system design too.'
+			},
+			{
+				heading: 'Future',
+				body: 'I want to branch out of web dev. system / command line projects, computer vision, deep learning, browser extensions, microcontrollers. Easier said than done though. \n\n Might also be worth picking up some certificates from Microsoft or LinkedIn'
 			}
 		]
 	}
