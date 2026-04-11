@@ -18,9 +18,9 @@ export const projects: Project[] = [
 		flavor:
 			"Gives personalized team and character suggestions to users based on team usage rate data and the user's owned roster.",
 		types: ['Svelte', 'FastAPI', 'Postgres'],
-		image: 'https://lightkeepers.vercel.app/thumbnail.png',
+		image: 'https://lightkeepers.moe/thumbnail.png',
 		links: [
-			{ link: 'https://lightkeepers.vercel.app', icon: 'weblink' },
+			{ link: 'https://lightkeepers.moe', icon: 'weblink' },
 			{ link: 'https://github.com/woopxwoop/lightkeepers', icon: 'github' }
 		]
 	},
