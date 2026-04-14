@@ -79,8 +79,6 @@
 		style="
 			background: {$navTheme.bg};
 			border-bottom-color: {$navTheme.border};
-			--nav-fg: {$navTheme.fg};
-			--accent-color: {$navTheme.accent};
 		"
 	>
 		<div class="nav-inner">
@@ -139,7 +137,7 @@
 	}
 
 	.nav-name:hover {
-		color: var(--accent-color);
+		color: var(--season-accent);
 	}
 
 	.nav-links {
@@ -155,11 +153,11 @@
 	}
 
 	.nav-link:hover {
-		color: var(--accent-color);
+		color: var(--season-accent);
 	}
 
 	.nav-link--active {
-		color: var(--accent-color);
+		color: var(--season-accent);
 	}
 
 	footer {

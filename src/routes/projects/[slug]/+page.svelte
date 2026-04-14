@@ -74,14 +74,14 @@
 
 	/* ── Back link ───────────────────────────────────── */
 	.back {
-		color: var(--intermediate-color);
+		color: var(--season-mid);
 		text-decoration: none;
 		transition: color 0.15s;
 		align-self: flex-start;
 	}
 
 	.back:hover {
-		color: #c0321a;
+		color: var(--season-accent);
 	}
 
 	/* ── Header ──────────────────────────────────────── */
@@ -104,8 +104,8 @@
 	}
 
 	.description {
+		color: var(--season-mid);
 		margin: 0;
-		color: var(--intermediate-color);
 	}
 
 	.header-right {
@@ -127,8 +127,8 @@
 		font-size: 11px;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--intermediate-color);
-		border: 1px solid var(--slightlydarker-color);
+		color: var(--season-mid);
+		border: 1px solid var(--season-mid);
 		padding: 0.2em 0.6em;
 		border-radius: 999px;
 	}
@@ -155,7 +155,7 @@
 
 	.divider {
 		border: none;
-		border-top: 1px solid var(--slightlydarker-color);
+		border-top: 1px solid var(--season-mid);
 		margin: 0;
 	}
 
@@ -170,7 +170,6 @@
 	.project-body p {
 		margin: 0;
 		line-height: 1.75;
-		color: var(--intermediate-color);
 	}
 
 	/* ── Responsive ──────────────────────────────────── */
