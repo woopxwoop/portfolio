@@ -5,27 +5,19 @@ type NowEntry = {
 
 export const nowEntries: NowEntry[] = [
 	{
-		date: '2026-03-22',
+		date: '2026-09-04',
 		sections: [
 			{
 				heading: 'School',
-				body: 'In my 4th semester at UW-Madison. Currently taking interaction design, foundation models, digital circuits, physics, and intro to electrical engineering.'
+				body: 'In my 5th semester at UW-Madison. Currently taking circuits, multivariable calculus, microprocessors, and signals.'
 			},
 			{
 				heading: 'Building',
-				body: 'Apart from this website and Lightkeepers, I am working on SteMy, an agent designed to facilitate stem cell differentiation, and Morgridge Calender, an event calendar for aggregating CS events at UW-Madison.'
+				body: 'Still working on the full-stack development of Lightkeepers (@lightkeepers.moe).'
 			},
 			{
-				heading: 'Learning',
-				body: 'I have been watching the old CS544 lectures to get a better idea of distributed systems and working with big data.'
-			},
-			{
-				heading: 'Thinking about',
-				body: 'Summer internship applications. Might pick up a book on system design too.'
-			},
-			{
-				heading: 'Future',
-				body: 'I want to branch out of web dev. system / command line projects, computer vision, deep learning, browser extensions, microcontrollers. Easier said than done though. \n\n Might also be worth picking up some certificates from Microsoft or LinkedIn'
+				heading: 'Part Time',
+				body: 'Working remotely as a SWE Intern @ Thomson Reuters. As part of the continuous operations team, I work with datadog for monitoring and logging.'
 			}
 		]
 	}
