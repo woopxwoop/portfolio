@@ -35,10 +35,7 @@
 		path: Pathname;
 		text: string;
 	};
-	const navItems: navItem[] = [
-		{ path: '/projects', text: 'Projects' },
-		{ path: '/now', text: 'Now' }
-	];
+	const navItems: navItem[] = [{ path: '/now', text: 'Now' }];
 
 	type footerSection = {
 		sectionTitle: string;
